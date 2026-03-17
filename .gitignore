@@ -4,6 +4,9 @@ out/
 !**/src/test/**/out/
 .kotlin
 
+src/BankingSystem/presentation_notes.md
+src/BankingSystem/presentation_notes.txt
+
 ### Eclipse ###
 .apt_generated
 .classpath

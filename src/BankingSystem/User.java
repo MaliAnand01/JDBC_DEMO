@@ -1,6 +1,5 @@
 package BankingSystem;
 
-import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,19 +28,18 @@ public class User {
             return;
         }
         String register_query = "INSERT INTO User(full_name, email, password) VALUES(?, ?, ?)";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(register_query);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(register_query)) {
             preparedStatement.setString(1, full_name);
             preparedStatement.setString(2, email);
             preparedStatement.setString(3, password);
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0) {
-                System.out.println("Registration Successfull!");
+                System.out.println("Registration Successful!");
             } else {
                 System.out.println("Registration Failed!");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error during registration: " + e.getMessage());
         }
     }
 
@@ -52,32 +50,32 @@ public class User {
         System.out.print("Password: ");
         String password = scanner.nextLine();
         String login_query = "SELECT * FROM User WHERE email = ? AND password = ?";
-        try{
-            PreparedStatement preparedStatement = connection.prepareStatement(login_query);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(login_query)) {
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()){
-                return email;
-            }else{
-                return null;
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if(resultSet.next()){
+                    return email;
+                }else{
+                    return null;
+                }
             }
-        }catch (SQLException e){
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("Error during login: " + e.getMessage());
         }
         return null;
     }
 
     public boolean user_exist(String email){
         String query = "SELECT * FROM user WHERE email = ?";
-        try{
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, email);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            return resultSet.next();
-        }catch (SQLException e){
-            e.printStackTrace();
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking user existence: " + e.getMessage());
         }
         return false;
     }
-}
+}
